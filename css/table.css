@@ -1,0 +1,17 @@
+/* Tabelas (compartilhado entre Consulta e Painel) */
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead th{background:var(--head-bg);color:var(--head-text);text-align:left;font-weight:700;padding:1.1rem 1rem;white-space:nowrap}
+thead th span{display:inline-flex;align-items:center;gap:.6rem}
+tbody td{padding:.9rem 1rem;border-bottom:1px solid var(--line);vertical-align:middle}
+tbody tr:nth-child(even){background:var(--surface-alt)}
+.empty{text-align:center;padding:2.5rem 1rem;color:var(--muted)}
+@media (max-width:760px){
+  thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  table,tbody,tr,td{display:block}
+  tbody tr{padding:.75rem 1rem;border-bottom:1px solid var(--line)}
+  tbody td{display:flex;justify-content:space-between;gap:1rem;border:0;padding:.3rem 0;text-align:right}
+  tbody td::before{content:attr(data-label);font-weight:700;color:var(--muted);text-align:left}
+  tbody td.td-actions{justify-content:stretch}
+  tbody td.td-actions::before{display:none}
+}

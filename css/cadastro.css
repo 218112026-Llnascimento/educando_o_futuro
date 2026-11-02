@@ -1,0 +1,25 @@
+/* Página de cadastro */
+.cad{display:grid;grid-template-columns:minmax(0,2fr) minmax(260px,1fr);gap:1.5rem;align-items:start}
+.form-card{padding:1.5rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem 1.25rem}
+.full{grid-column:1/-1}
+.form-card label::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--gold);flex:none}
+.req{color:var(--bad)}
+.inp{position:relative}
+.inp .ico{position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+.inp input,.inp select{padding-left:2.7rem}
+textarea{font:inherit;color:var(--text);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:.6rem .8rem;width:100%;resize:vertical}
+[aria-invalid="true"]{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad)}
+.panel{background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow);padding:1.25rem;display:grid;gap:1rem}
+.panel h2{margin:0;font-size:1.2rem;display:flex;gap:.75rem;align-items:center}
+.note{border-radius:10px;padding:1rem;border:1px solid}
+.note-warn{background:color-mix(in srgb,var(--warn) 20%,var(--surface));border-color:var(--warn)}
+.note-warn ul{margin:0;padding-left:1.25rem;display:grid;gap:.4rem}
+.note-ok{background:color-mix(in srgb,var(--ok) 15%,var(--surface));border-color:var(--ok);display:flex;gap:.6rem;align-items:center;font-weight:700}
+.note-ok .ico{color:var(--ok)}
+@media (max-width:900px){
+  .cad{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  .grid2{grid-template-columns:1fr}
+}

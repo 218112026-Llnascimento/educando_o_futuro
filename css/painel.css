@@ -1,0 +1,37 @@
+/* Página do painel */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;list-style:none;padding:0;margin:0 0 1.25rem}
+.datenav{margin-left:auto;display:flex;align-items:center;gap:.25rem;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:.25rem}
+.datenav button{min-width:44px;min-height:44px;border:0;background:transparent;color:var(--text);border-radius:8px;cursor:pointer;display:grid;place-items:center}
+.datenav button:hover{background:var(--surface-alt)}
+.datenav strong{min-width:7.5rem;text-align:center}
+.kpi{background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--c);border-radius:var(--r);box-shadow:var(--shadow);padding:1rem 1.25rem}
+.kpi>span{color:var(--muted);font-weight:700}
+.kpi div{display:flex;align-items:flex-end;justify-content:space-between;gap:.5rem}
+.kpi strong{font-size:2.8rem;line-height:1.1;color:var(--n,var(--c))}
+.kpi small{color:var(--muted)}
+.dash{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,1fr);gap:1.25rem;align-items:start}
+.side{display:grid;gap:1.25rem}
+.next,.chart{padding:1.25rem}
+.next h2,.chart h2{margin:0;font-size:1.3rem}
+.next-h{display:flex;justify-content:space-between;align-items:center;gap:.5rem 1rem;flex-wrap:wrap}
+.next-h .more{margin:0}
+.mini{border-collapse:separate;border-spacing:0 .6rem;margin-top:.5rem}
+.mini thead th{background:none;color:var(--muted);padding:.25rem .75rem;font-size:.9rem}
+.mini tbody tr,.mini tbody tr:nth-child(even){background:none}
+.mini tbody td{background:var(--surface-alt);border:0;border-block:1px solid var(--line);padding:.6rem .75rem}
+.mini tbody td:first-child{border-left:1px solid var(--line);border-radius:10px 0 0 10px}
+.mini tbody td:last-child{border-right:1px solid var(--line);border-radius:0 10px 10px 0}
+.pill{display:inline-block;background:var(--head-bg);color:#fff;border-radius:10px;padding:.3rem .8rem;font-weight:800;white-space:nowrap}
+.bars{list-style:none;margin:1rem 0 0;padding:0;display:grid;gap:.9rem}
+.bars li{display:grid;grid-template-columns:8rem 1fr 2rem;align-items:center;gap:.75rem}
+.track{background:var(--surface-alt);border-radius:999px;height:24px;overflow:hidden}
+.fill{height:100%;min-width:0;border-radius:999px;transition:width .3s}
+@media (max-width:900px){
+  .dash{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  .datenav{margin-left:0;width:100%;justify-content:space-between}
+  .mini tbody tr{background:var(--surface-alt);border:1px solid var(--line);border-radius:10px;margin-bottom:.6rem}
+  .mini tbody td{background:none;border:0!important;border-radius:0!important;padding:.3rem 0}
+  .bars li{grid-template-columns:6.5rem 1fr 1.5rem}
+}
