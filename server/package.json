@@ -1,0 +1,14 @@
+{
+  "name": "educando-futuro-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "API e servidor web do sistema de atendimentos Educando para o Futuro",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "mysql2": "^3.11.5"
+  }
+}

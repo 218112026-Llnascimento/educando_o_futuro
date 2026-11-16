@@ -1,8 +1,9 @@
-/* Página Painel: indicadores, próximos compromissos e gráficos do dia selecionado. */
-(() => {
+/* Página Painel: indicadores, próximos compromissos e gráficos do dia selecionado (dados do MySQL via API). */
+(async () => {
   "use strict";
-  const { $, el, cell, fmtDate, byWhen, shiftDay, getDay, setDay, store, PROS } = window.EPF;
-  const data = store.load();
+  const { $, el, cell, fmtDate, byWhen, shiftDay, getDay, setDay, api } = window.EPF;
+  let data = [];
+  let pros = [];
   let day = getDay();
 
   const kpi = (label, n, color, ink) => {
@@ -37,7 +38,7 @@
       kpi("Cancelados", count("cancelado"), "var(--bad)"));
 
     renderBars($("#bar-status"), [["Agendados", count("agendado"), "var(--gold)"], ["Realizados", count("realizado"), "var(--ok)"], ["Cancelados", count("cancelado"), "var(--bad)"]]);
-    renderBars($("#bar-pro"), PROS.map((p) => [p, list.filter((a) => a.pro === p).length, "var(--ink2)"]));
+    renderBars($("#bar-pro"), pros.map((p) => [p.nome, list.filter((a) => a.proId === p.id).length, "var(--ink2)"]));
 
     const next = data.filter((a) => a.status === "agendado" && a.date >= day).sort(byWhen).slice(0, 4);
     $("#proximos").replaceChildren(...(next.length
@@ -50,5 +51,10 @@
   const move = (n) => { day = shiftDay(day, n); setDay(day); render(); };
   $("#d-prev").addEventListener("click", () => move(-1));
   $("#d-next").addEventListener("click", () => move(1));
+  try {
+    [data, pros] = await Promise.all([api.atendimentos(), api.profissionais()]);
+  } catch (err) {
+    $("#proximos").replaceChildren(el("tr", {}, el("td", { colSpan: 4, className: "empty", textContent: (err.errors || ["Erro ao carregar dados."]).join(" ") })));
+  }
   render();
 })();

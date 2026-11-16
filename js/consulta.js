@@ -1,9 +1,9 @@
-/* Página Consulta: lista, filtra, pagina e exclui atendimentos. */
-(() => {
+/* Página Consulta: lista, filtra, pagina e exclui atendimentos (dados do MySQL via API). */
+(async () => {
   "use strict";
-  const { $, el, icon, cell, fmtDate, byWhen, getDay, setDay, store, LABEL, ICON } = window.EPF;
+  const { $, el, icon, cell, fmtDate, byWhen, getDay, setDay, api, fillSelect, LABEL, ICON } = window.EPF;
   const PAGE_SIZE = 5;
-  let data = store.load();
+  let data = [];
   let page = 1;
   let deleting = null;
 
@@ -16,6 +16,8 @@
       .filter((a) => (!date || a.date === date) && (!pro || a.pro === pro) && (!status || a.status === status))
       .sort(byWhen);
   };
+
+  const showEmpty = (text) => $("#corpo").replaceChildren(el("tr", {}, el("td", { colSpan: 6, className: "empty", textContent: text })));
 
   function renderRows(slice) {
     const body = $("#corpo");
@@ -84,14 +86,18 @@
     $("#del-txt").textContent = `${a.patient} · ${a.type} · ${fmtDate(a.date)} às ${a.time}. Essa ação não pode ser desfeita.`;
     dialog.showModal();
   }
-  dialog.addEventListener("close", () => {
-    if (dialog.returnValue === "yes" && deleting) {
-      data = data.filter((a) => a.id !== deleting.id);
-      store.save(data);
-      render();
-    }
+  dialog.addEventListener("close", async () => {
+    const target = deleting, confirmed = dialog.returnValue === "yes";
     deleting = null;
     dialog.returnValue = "";
+    if (!confirmed || !target) return;
+    try {
+      await api.excluir(target.id);
+      data = data.filter((a) => a.id !== target.id);
+    } catch (err) {
+      alert((err.errors || ["Não foi possível excluir o atendimento."]).join("\n"));
+    }
+    render();
   });
 
   $("#filtros").addEventListener("submit", (e) => { e.preventDefault(); page = 1; render(); });
@@ -101,5 +107,15 @@
     render();
   }));
 
-  render();
+  showEmpty("Carregando atendimentos…");
+  try {
+    const [lista, pros] = await Promise.all([api.atendimentos(), api.profissionais()]);
+    const proSelect = $("#f-prof"), current = proSelect.value;
+    fillSelect(proSelect, pros, (p) => p.nome, (p) => p.nome);
+    proSelect.value = current;
+    data = lista;
+    render();
+  } catch (err) {
+    showEmpty((err.errors || ["Erro ao carregar atendimentos."]).join(" "));
+  }
 })();

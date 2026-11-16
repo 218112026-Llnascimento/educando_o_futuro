@@ -1,39 +1,49 @@
-/* Código compartilhado entre as páginas: dados (localStorage), utilitários de DOM e tema. */
+/* Código compartilhado entre as páginas: acesso à API (MySQL), utilitários de DOM e tema. */
 (() => {
   "use strict";
 
-  const KEYS = { data: "epf:agenda:v1", day: "epf:day", theme: "epf:theme" };
+  const KEYS = { day: "epf:day", theme: "epf:theme" };
   const DEFAULT_DAY = "2026-10-27";
   const LABEL = { realizado: "Realizado", agendado: "Agendado", cancelado: "Cancelado" };
   const ICON = { realizado: "i-check", agendado: "i-clock", cancelado: "i-x" };
-  const PROS = ["Profissional A", "Profissional B", "Profissional C"];
-
-  const SEED = [
-    ["2026-10-27", "08:00", "PAC-014", "Profissional A", "Terapia ocupacional", "realizado"],
-    ["2026-10-27", "09:00", "PAC-022", "Profissional B", "Psicopedagogia", "realizado"],
-    ["2026-10-27", "10:30", "PAC-007", "Profissional A", "Fonoaudiologia", "agendado"],
-    ["2026-10-27", "14:00", "PAC-031", "Profissional C", "Psicologia", "agendado"],
-    ["2026-10-27", "15:30", "PAC-018", "Profissional B", "Psicopedagogia", "cancelado"],
-    ["2026-10-28", "09:30", "PAC-040", "Profissional C", "Psicologia", "agendado"],
-    ["2026-10-28", "11:00", "PAC-012", "Profissional A", "Terapia ocupacional", "agendado"],
-  ].map(([date, time, patient, pro, type, status], i) => ({ id: i + 1, date, time, patient, pro, type, status, obs: "" }));
-
   const read = (key) => { try { return localStorage.getItem(key); } catch { return null; } };
   const write = (key, value) => { try { localStorage.setItem(key, value); } catch { /* storage indisponível */ } };
 
-  const store = {
-    load() {
-      try {
-        const list = JSON.parse(read(KEYS.data));
-        if (Array.isArray(list)) return list;
-      } catch { /* dados inválidos: usa o seed */ }
-      return SEED.map((a) => ({ ...a }));
-    },
-    save: (list) => write(KEYS.data, JSON.stringify(list)),
-    nextId: (list) => list.reduce((max, a) => Math.max(max, a.id), 0) + 1,
+  /* Acesso ao banco via API REST (server/server.js). Erros viram exceções com a lista `errors`. */
+  async function request(method, url, body) {
+    let res;
+    try {
+      res = await fetch(url, { method, headers: body ? { "Content-Type": "application/json" } : {}, body: body ? JSON.stringify(body) : undefined });
+    } catch {
+      throw Object.assign(new Error("offline"), { errors: ["Não foi possível conectar ao servidor. Verifique se o sistema está rodando (docker compose up)."] });
+    }
+    if (res.status === 204) return null;
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok) throw Object.assign(new Error("api"), { status: res.status, errors: json.errors || ["Erro inesperado no servidor"] });
+    return json;
+  }
+
+  const api = {
+    atendimentos: () => request("GET", "/api/atendimentos"),
+    profissionais: () => request("GET", "/api/profissionais"),
+    tipos: () => request("GET", "/api/tipos"),
+    criar: (rec) => request("POST", "/api/atendimentos", rec),
+    atualizar: (id, rec) => request("PUT", `/api/atendimentos/${id}`, rec),
+    excluir: (id) => request("DELETE", `/api/atendimentos/${id}`),
   };
 
   const $ = (selector, root = document) => root.querySelector(selector);
+
+  // Preenche um <select> mantendo a primeira opção ("Selecione…"/"Todos").
+  const fillSelect = (select, items, valueOf, labelOf) => {
+    const first = select.options[0];
+    select.replaceChildren(first, ...items.map((it) => {
+      const o = document.createElement("option");
+      o.value = valueOf(it);
+      o.textContent = labelOf(it);
+      return o;
+    }));
+  };
 
   const el = (tag, props = {}, ...kids) => {
     const { dataset, ...rest } = props;
@@ -76,5 +86,5 @@
     });
   }
 
-  window.EPF = { $, el, icon, cell, fmtDate, byWhen, shiftDay, getDay, setDay, store, LABEL, ICON, PROS };
+  window.EPF = { $, el, icon, cell, fmtDate, byWhen, shiftDay, getDay, setDay, api, fillSelect, LABEL, ICON };
 })();
