@@ -1,4 +1,3 @@
-/* Código compartilhado entre as páginas: acesso à API (MySQL), utilitários de DOM e tema. */
 (() => {
   "use strict";
 
@@ -7,9 +6,8 @@
   const LABEL = { realizado: "Realizado", agendado: "Agendado", cancelado: "Cancelado" };
   const ICON = { realizado: "i-check", agendado: "i-clock", cancelado: "i-x" };
   const read = (key) => { try { return localStorage.getItem(key); } catch { return null; } };
-  const write = (key, value) => { try { localStorage.setItem(key, value); } catch { /* storage indisponível */ } };
+  const write = (key, value) => { try { localStorage.setItem(key, value); } catch {} };
 
-  /* Acesso ao banco via API REST (server/server.js). Erros viram exceções com a lista `errors`. */
   async function request(method, url, body) {
     let res;
     try {
@@ -34,7 +32,6 @@
 
   const $ = (selector, root = document) => root.querySelector(selector);
 
-  // Preenche um <select> mantendo a primeira opção ("Selecione…"/"Todos").
   const fillSelect = (select, items, valueOf, labelOf) => {
     const first = select.options[0];
     select.replaceChildren(first, ...items.map((it) => {
@@ -50,7 +47,7 @@
     const node = document.createElement(tag);
     Object.assign(node, rest);
     if (dataset) Object.assign(node.dataset, dataset);
-    node.append(...kids); // strings viram texto (sem risco de XSS)
+    node.append(...kids);
     return node;
   };
 

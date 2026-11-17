@@ -1,4 +1,3 @@
-/* Página Cadastro: cria um atendimento ou edita um existente (cadastro.html?id=N). Dados salvos no MySQL via API. */
 (async () => {
   "use strict";
   const { $, el, icon, setDay, api, fillSelect } = window.EPF;

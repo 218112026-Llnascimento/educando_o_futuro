@@ -1,4 +1,3 @@
-/* Página Painel: indicadores, próximos compromissos e gráficos do dia selecionado (dados do MySQL via API). */
 (async () => {
   "use strict";
   const { $, el, cell, fmtDate, byWhen, shiftDay, getDay, setDay, api } = window.EPF;
@@ -21,7 +20,7 @@
       fill.style.width = (n / max) * 100 + "%";
       fill.style.background = color;
       const track = el("div", { className: "track" }, fill);
-      track.setAttribute("aria-hidden", "true"); // o número ao lado já informa o valor
+      track.setAttribute("aria-hidden", "true");
       return el("li", {}, el("span", { textContent: label }), track, el("b", { textContent: String(n) }));
     }));
   }

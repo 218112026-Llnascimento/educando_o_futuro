@@ -1,4 +1,3 @@
-/* Página Consulta: lista, filtra, pagina e exclui atendimentos (dados do MySQL via API). */
 (async () => {
   "use strict";
   const { $, el, icon, cell, fmtDate, byWhen, getDay, setDay, api, fillSelect, LABEL, ICON } = window.EPF;
