@@ -1,4 +1,3 @@
-/* Servidor web + API REST do sistema Educando para o Futuro (Express + MySQL). */
 "use strict";
 const path = require("path");
 const express = require("express");
@@ -13,12 +12,11 @@ const pool = mysql.createPool({
   user: process.env.DB_USER || "educando",
   password: process.env.DB_PASSWORD || "educando123",
   database: process.env.DB_NAME || "educando_futuro",
-  dateStrings: true, // DATE/TIME chegam como texto (sem conversão de fuso)
+  dateStrings: true,
   waitForConnections: true,
   connectionLimit: 10,
 });
 
-// O front usa status em minúsculas; o banco guarda como no DER (Agendado, Realizado, Cancelado).
 const STATUS_DB = { agendado: "Agendado", realizado: "Realizado", cancelado: "Cancelado" };
 
 const SELECT_ATENDIMENTO = `
@@ -134,7 +132,6 @@ app.delete("/api/atendimentos/:id", wrap(async (req, res) => {
 
 app.use("/api", (req, res) => res.status(404).json({ errors: ["Rota não encontrada"] }));
 
-// Páginas estáticas (index.html, cadastro.html, css/, js/ ...)
 app.use(express.static(PUBLIC_DIR, { index: "index.html", dotfiles: "ignore" }));
 
 app.use((err, req, res, next) => {
